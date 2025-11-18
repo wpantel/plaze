@@ -1,0 +1,50 @@
+{% extends "base.html.j2" %}
+
+{% block body %}
+<h1 class="text-center mb-4 page-title"><strong>Playlists</strong></h1>
+
+{# Container for Playlist Info, displayed with AJAX/JS #}
+<div id="plModal" class="myModal">
+    <div id="plModalContent" class="myModalContent">
+        <span onclick="closePlaylistModal();" class="close">&times;</span>
+        <div id="playlist-tracks-container" class="container py-4">
+        </div>
+    </div>
+</div>
+
+<div class="container my-5">
+    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-4 g-4">
+        {% for map in playlists["items"] %}
+        {% if map %}
+        <div class="col">
+            {# Playlist Card #}
+            <div class="card h-100 shadow-sm">
+                {# Playlist Image (Square) #}
+                <img src="{{ map["images"][0]["url"] if map["images"] else 'static/default_playlist_image.png'}}" 
+                     class="card-img-top playlist-image" 
+                     alt="playlist-image">
+                {# Playlist Info (Centered Text) #}
+                <div class="card-body text-center d-flex flex-column">
+                    <h5 class="card-title">{{ map["name"] }}</h5>
+                    {% if map["description"] %}
+                    <p class="card-text">{{ map["description"] }}</p>
+                    {% endif %}
+                    <p class="card-text">
+                        <strong>Owner: </strong>
+                        <a href="{{ map["owner"]["external_urls"]["spotify"] }}">{{ map["owner"]["display_name"] }}</a>
+                    </p>
+                    <div class="mt-auto d-flex justify-content-center gap-2">
+                        {# Store the song endpoint in the button's data attribute, useful for identification #}
+                        <button onclick="playlistModal(this)" data-playlistendpoint="{{map["href"]}}"
+                           class="btn btn-primary btn-sm" role="button">More Info</button>
+                        <a href="{{ map["external_urls"]["spotify"] }}" 
+                           class="btn btn-secondary btn-sm" role="button">View on Spotify</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

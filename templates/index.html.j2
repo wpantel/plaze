@@ -1,0 +1,33 @@
+{% extends "base.html.j2" %}
+
+{% block body %}
+<div class="homepage-container">
+    <div class="text-container">
+        <h1 class="homepage-title">Welcome to Plaze</h1>
+        <p class="homepage-subtitle">Explore millions of songs. Create playlists with ease.</p>
+
+        <h3 class="homepage-section-title">Why Plaze?</h3>
+        <p>Spotify boasts countless incredible features. Individual features like creating playlists quickly can get lost in the chaos.</p>
+        <p>Plaze focuses just on that: playlists from songs you search, or from your already existing playlists.</p>
+
+        {% if 'williamp_userID' in session %}
+            <p>Check out your playlists!</p>
+            <a href="playlists" class="btn btn-info homepage-btn">View Your Playlists</a>
+        {% else %}
+            <p>Log in with your Spotify account to start!</p>
+            <a href="account" class="btn btn-success homepage-btn">Log In</a>
+        {% endif %}
+    </div>
+</div>
+
+{% with messages = get_flashed_messages() %}
+    {% if messages %}
+        <ul class="flashes">
+            {% for message in messages %}
+                <li>{{ message }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+{% endwith %}
+
+{% endblock %}

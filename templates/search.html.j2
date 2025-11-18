@@ -1,0 +1,98 @@
+{% extends "base.html.j2" %}
+
+{% block body %}
+<h1 class="text-center text-light mb-4 page-title"><strong>Search</strong></h1>
+
+{# Form Method = Get #}
+<div class="container mt-4">
+    <form>
+        {# Search Box #}
+        <div class="row justify-content-center">
+            <div class="col-md-6 mb-3 text-center">
+                <input type="text" class="form-control" id="search" name="q" placeholder="Search..." value="{{ request.args.get('q', '') }}" required>
+            </div>
+        </div>
+
+        {# Filters for Year (Optional) #}
+        <div class="row justify-content-center">
+            <div class="col-auto mb-3">
+                <label for="yearbef" class="form-label text-light">From</label>
+                <input type="number" class="form-control search-number" name="yearbef" min="1800" max="2026" placeholder="YYYY">
+            </div>
+            <div class="col-auto mb-3">
+                <label for="yearaft" class="form-label text-light">To</label>
+                <input type="number" class="form-control search-number" name="yearaft" min="1800" max="2026" placeholder="YYYY">
+            </div>
+        </div>
+
+        {# Submit Button #}
+        <div class="row justify-content-center">
+            <div class="col-md-6 text-center">
+                <button type="submit" class="btn btn-primary">Submit</button>
+            </div>
+        </div>
+    </form>
+</div>
+
+{# Display Search Results #}
+{% if data %}
+    <div class="container">
+        <h3 class="text-light mb-4">Search results for: "{{ request.args.get('q')|e }}"</h3>
+        
+        {% for map in data["tracks"]["items"] %}
+            <div class="card mb-3 shadow-sm search-card">
+                <div class="card-body">
+                    <div class="d-flex">
+                        {# Album Cover #}
+                        <img src="{{ map['album']['images'][0]['url'] }}" 
+                             alt="Album cover" 
+                             class="img-thumbnail me-3 album-cover">
+                        
+                        <div>
+                            {# Track Name #}
+                            <h5 class="card-title text-light">{{ map["name"] }}</h5>
+                            
+                            {# Artist(s) #}
+                            <p class="card-text">
+                                {% for artist in map["artists"] %}
+                                    <span class="badge bg-secondary">{{ artist["name"] }}</span>{% if not loop.last %}, {% endif %}
+                                {% endfor %}
+                            </p>
+                            
+                            {# Additional Track Info #}
+                            <p class="text-muted mb-1">
+                                <strong class="text-light">Album:</strong> 
+                                <span class="text-light">{{ map["album"]["name"] }}</span><br>
+                                <strong class=text-light>Released:</strong>
+                                <span class="text-light">{{ map["album"]["release_date"] }}</span><br>
+                            </p>
+                            
+                            {# Popularity #}
+                            <div class="progress mb-2 popularity-bar">
+                                <div class="progress-bar" 
+                                     role="progressbar" 
+                                     style="width: {{ map['popularity'] }}%;" 
+                                     aria-valuenow="{{ map['popularity'] }}" 
+                                     aria-valuemin="0" 
+                                     aria-valuemax="100">
+                                </div>
+                            </div>
+                            <small>Popularity: {{ map["popularity"] }}</small>
+                        </div>
+                    </div>
+                    
+                    {# Buttons #}
+                    <a href="{{ map['external_urls']['spotify'] }}" 
+                       class="btn btn-outline-primary btn-sm mt-3">
+                       Listen on Spotify
+                    </a>
+                    <button onclick="addFavorite(this);"
+                        class="btn btn-outline-success btn-sm mt-3"
+                        data-songEndpoint="{{map["href"]}}">Add to Favorites</button>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% endif %}
+
+{% endblock %}

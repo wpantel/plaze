@@ -1,0 +1,78 @@
+{% extends "base.html.j2" %}
+
+{% block body %}
+<h1 class="text-center mb-4 page-title"><strong>Favorite Songs</strong></h1>
+
+<div class="container mt-4">
+    {% if data %}
+    {# Calls a JS function to handle creating a playlist with favorite songs #}
+    <div class="text-center mt-4">
+        <button onclick="playlistFavSongs()" 
+        class="btn btn-outline-success btn-md" id="plfavsong-button">Create Playlist from Favorite Songs</button>
+    </div>
+
+    {# Display all the favorite songs #}
+    <div class="row g-3">
+        {% for map in data["tracks"] %}
+        <div class="col-md-6">
+            <div class="card mb-3 shadow-sm">
+                <div class="card-body">
+                    <div class="d-flex">
+                        {# Album Cover #}
+                        <img src="{{ map['album']['images'][0]['url'] }}" 
+                                alt="Album cover" 
+                                class="img-thumbnail me-3 album-cover">
+
+                        <div>
+                            {# Track Name #}
+                            <h5 class="card-title">{{ map["name"] }}</h5>
+
+                            {# Artist(s) #}
+                            <p class="card-text">
+                                {% for artist in map["artists"][:3] %}
+                                    <span class="badge bg-secondary">{{ artist["name"] }}</span>{% if not loop.last %}, {% endif %}
+                                {% endfor %}
+                            </p>
+
+                            {# Additional Track Info #}
+                            <p class="text-muted mb-1">
+                                <strong>Album:</strong> {{ map["album"]["name"] }}<br>
+                                <strong>Released:</strong> {{ map["album"]["release_date"] }}<br>
+                            </p>
+
+                            {# Popularity Progress Bar #}
+                            <div class="progress popularity-bar mb-2">
+                                <div class="progress-bar" 
+                                    role="progressbar" 
+                                    style="width: {{ map['popularity'] }}%;" 
+                                    aria-valuenow="{{ map['popularity'] }}" 
+                                    aria-valuemin="0" 
+                                    aria-valuemax="100">
+                                </div>
+                            </div>
+                            <small>Popularity: {{ map["popularity"] }}</small>
+                        </div>
+                    </div>
+                    {# Buttons #}
+                    <a href="{{ map['external_urls']['spotify'] }}" 
+                       class="btn btn-outline-primary btn-sm mt-3">
+                       Listen on Spotify
+                    </a>
+                    <button onclick="removeFavorite(this);"
+                        class="removeFavButton btn btn-outline-danger btn-sm mt-3"
+                        data-songEndpoint="{{map["href"]}}">Remove from Favorites</button>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+        <p class="text-center">No favorite songs</p>
+        {# A button linked to "Search" #}
+        <div class="d-flex justify-content-center">
+            <a href="search" class="btn btn-primary w-30" id="linksearch-button">Add favorite songs</a>
+        </div>    
+    {% endif %}
+</div>
+
+{% endblock %}

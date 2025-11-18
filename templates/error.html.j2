@@ -1,0 +1,22 @@
+{% extends "base.html.j2" %}
+
+{% block body%}
+    <h1 class="text-center mb-4 page-title">Error</h1>
+    {% if error %}
+        <p>Error: {{error}}</p>
+    {% else %}
+        <p>Something went wrong. Make sure you are logged in with your Spotify account.</p>
+    {% endif %}
+
+    {% with messages = get_flashed_messages() %}
+		{% if messages %}
+			<ul class=flashes>
+				{% for message in messages %}
+					<li>{{ message }}</li>
+				{% endfor %}
+			</ul>
+		{% endif %}
+	{% endwith %}
+
+
+{% endblock %}
